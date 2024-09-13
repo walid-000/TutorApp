@@ -1,0 +1,110 @@
+/* Basic resets and styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: #e3f2fd; /* Light bluish background */
+}
+
+header {
+    background-color: #bbdefb; /* Soft blue background */
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #90caf9; /* Light blue border */
+}
+
+header img {
+    max-width: 150px;
+    height: auto;
+    animation: bounce 2s ease-in-out 2;
+}
+
+header h1 {
+    color: #1e88e5; /* Darker blue */
+}
+
+header p {
+    color: #424242; /* Dark grey */
+}
+
+header a {
+    color: #1e88e5;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+header a:hover {
+    text-decoration: underline;
+}
+
+/* Main sections */
+section {
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 800px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+section h2 {
+    color: #1e88e5;
+}
+
+section p, section ul {
+    color: #424242;
+}
+
+section ul {
+    list-style: disc;
+    margin-left: 20px;
+}
+
+.social-media {
+    background: #e3f2fd; /* Light bluish background */
+    padding: 20px;
+    text-align: center;
+}
+
+.social-media h2 {
+    color: #1e88e5;
+}
+
+.social-media a {
+    color: #1e88e5;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 18px;
+}
+
+.social-media a:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+footer {
+    background-color: #bbdefb; /* Soft blue background */
+    padding: 10px;
+    text-align: center;
+    border-top: 2px solid #90caf9; /* Light blue border */
+}
+
+footer p {
+    margin: 0;
+    color: #424242;
+}
+
+/* Animations */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}

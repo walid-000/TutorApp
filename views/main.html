@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page - Tutor App</title>
+    <link rel="stylesheet" href="main.css">
+    <script>
+        // Function to show the appropriate dashboard based on user role
+        function showDashboard(role) {
+            const studentSection = document.getElementById('student-section');
+            const teacherSection = document.getElementById('teacher-section');
+
+            studentSection.style.display = 'none';
+            teacherSection.style.display = 'none';
+
+            if (role === 'student') {
+                studentSection.style.display = 'block';
+            } else if (role === 'teachers') {
+                teacherSection.style.display = 'block';
+            }
+        }
+
+        // Example of setting the role; this should come from your server/session
+        window.onload = function() {
+            const role = 'teachers';  // Change to 'teacher' to test teacher dashboard
+            showDashboard(role);
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <img src=".\assets\images\Design.png" alt="Tutor App Logo" class="logo">
+        <h1>Welcome to Tutor App</h1>
+    </header>
+
+    <main>
+        <!-- Options for Students -->
+        <section id="student-section" class="dashboard">
+            <h2>Student Dashboard</h2>
+            <div class="dashboard-item">
+                <h3>Search for Subjects</h3>
+                <form action="search.html" method="get" class="search-form">
+                    <input type="text" name="subject" placeholder="Search for subject" required>
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+            <div class="dashboard-item">
+                <h3>Search for Teachers</h3>
+                <form action="search.html" method="get" class="search-form">
+                    <input type="text" name="teacher" placeholder="Search for teachers" required>
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+            <div class="dashboard-item">
+                <h3>View Assignments</h3>
+                <p><a href="student-assignments.html">View Your Assignments</a></p>
+            </div>
+        </section>
+
+        <!-- Options for Teachers -->
+        <section id="teacher-section" class="dashboard">
+            <h2>Teacher Dashboard</h2>
+            <div class="dashboard-item">
+                <h3>Manage Work</h3>
+                <p><a href="manage-work.html">View and Manage Work</a></p>
+            </div>
+            <div class="dashboard-item">
+                <h3>Message System</h3>
+                <p><a href="messages.html">Messages</a></p>
+            </div>
+            <div class="dashboard-item">
+                <h3>Manage Assignments</h3>
+                <p><a href="teacher-assignments.html">Manage Assignments and Student Progress</a></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Tutor App. All rights reserved.</p>
+    </footer>
+</body>
+</html>

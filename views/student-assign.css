@@ -1,0 +1,145 @@
+/* styles.css */
+
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    animation: fadeIn 2s ease-in;
+}
+
+header {
+    background-color: #4a90e2;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 5px solid #357ab8;
+    animation: slideDown 1s ease-out;
+}
+
+header img.logo {
+    display: block;
+    margin: 0 auto 10px;
+    max-width: 120px;
+    animation: rotateLogo 2s ease-in-out infinite alternate;
+}
+
+header h2 {
+    font-size: 2em;
+    margin: 0;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+main {
+    padding: 30px 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    animation: fadeInUp 1.5s ease-in-out;
+}
+
+section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section h3 {
+    color: #4a90e2;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+section p a {
+    color: #357ab8;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+section p a:hover {
+    color: #1c4a6e;
+}
+
+.submission-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.submission-form label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.submission-form input[type="text"],
+.submission-form input[type="file"],
+.submission-form textarea {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+.submission-form input[type="text"]:focus,
+.submission-form input[type="file"]:focus,
+.submission-form textarea:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+
+.submission-form button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submission-form button:hover {
+    background-color: #357ab8;
+}
+
+section:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+footer {
+    background-color: #4a90e2;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+    border-top: 3px solid #357ab8;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes slideDown {
+    0% { transform: translateY(-100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes rotateLogo {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+    0% { transform: translateY(50px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}

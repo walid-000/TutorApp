@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Assignments - Tutor App</title>
+    <link rel="stylesheet" href="student-assign.css">
+</head>
+<body>
+    <header>
+        <img src=".\assets\images\Design.png" alt="Tutor App Logo" class="logo">
+        <h2> Assignments</h2>
+    </header>
+
+    <main>
+       
+        <!-- Assignment Submission Section -->
+        <section class="upload-section">
+            <h3>Upload the Assignment</h3>
+            <form action="submit_assignment.html" method="post" enctype="multipart/form-data" class="submission-form">
+                <label for="assignment-title">Assignment Title:</label>
+                <input type="text" id="assignment-title" name="assignment_title" placeholder="Enter assignment title" >
+
+                <label for="assignment-file">Upload Assignment:</label>
+                <input type="file" id="assignment-file" name="assignment_file" required>
+
+                <label for="submission-notes">Notes (optional):</label>
+                <textarea id="submission-notes" name="submission_notes" rows="4" placeholder="Enter  notes for students"></textarea>
+
+                <button type="submit">Submit Assignment</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Tutor App. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Tutor App</title>
+    <link rel="stylesheet" href="messeges.css">
+</head>
+<body>
+    <header>
+        <img src=".\assets\images\Design.png" alt="Tutor App Logo" class="logo">
+        <h1>Messages</h1>
+    </header>
+
+    <main>
+        <div class="chat-container">
+            <div class="chat-sidebar">
+                <h3>Your Chats</h3>
+                <ul>
+                    <li class="active" onclick="openChat('raghav jha')">Teacher A</li>
+                    <li onclick="openChat('Aditya singh')">Teacher B</li>
+                    <li onclick="openChat('Ravindra Jha')">Teacher C</li>
+                    <li onclick="openChat('Raushan Jha')">Teacher D</li>
+                </ul>
+            </div>
+            <div class="chat-box" id="chat-box">
+                <div class="chat-header">
+                    <h2>Teacher A</h2>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message sent">
+                        <p></p>
+                        <span class="time"></span>
+                    </div>
+                    <div class="message received">
+                        <p></p>
+                        <span class="time"></span>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" placeholder="Type a message..." id="message-input">
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Tutor App. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function openChat(teacherName) {
+            document.querySelector('.chat-header h2').innerText = teacherName;
+            document.getElementById('chat-messages').innerHTML = 'To ask any query contact us '; // Clear chat messages
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const messageText = messageInput.value.trim();
+            if (messageText !== '') {
+                const chatMessages = document.getElementById('chat-messages');
+                const newMessage = document.createElement('div');
+                newMessage.classList.add('message', 'sent');
+                newMessage.innerHTML = `<p>${messageText}</p><span class="time">${new Date().toLocaleTimeString()}</span>`;
+                chatMessages.appendChild(newMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the latest message
+                messageInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

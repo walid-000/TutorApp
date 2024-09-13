@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Sign Up - HomeTutor</title>
+    <link href="sfs.css" rel="stylesheet">
+    <link href="sfs.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <img src=".\assets\images\Design.png" alt="Tutor App Logo" style="max-width: 150px;">
+        <h2>Student Sign Up</h2>
+    </header>
+
+    <div class="auth-container">
+        <h2>Create Your Student Account</h2>
+        <form id="signup-form" >
+            <input type="text" placeholder="Full Name" required>
+            <input type="text" placeholder="Class" required>
+            <input type="text" placeholder="Previous Year's Grade" required>
+            <input type="tel" placeholder="Mobile Number" required>
+            <input type="email" placeholder="Email" required>
+            <input type="tel" placeholder="Parent's Mobile Number" >
+            <input type="text" placeholder="Address" required>
+            <input type="submit" value="Submit">
+            <p>Already have an account? <a href="login.html">Login</a></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Simulate form submission and redirect to the main page
+            setTimeout(() => {
+                window.location.href = "main.html"; // Redirect to the main page
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

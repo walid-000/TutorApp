@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor App - Splash Screen</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f4ebeb;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+   
+    <video autoplay muted playsinline id="splashVideo">
+        <source src="D:\mywebapp\assets\Brimston.mp4" type="video/mp4">
+        
+    </video>
+
+    <script>
+        
+        setTimeout(function() {
+            window.location.href = "index.html";
+        }, 5000);
+    </script>
+
+</body>
+</html>

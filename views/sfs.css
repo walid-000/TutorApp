@@ -1,0 +1,129 @@
+/* Basic resets and styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f0f8ff; /* Light background for a relaxing feel */
+}
+
+header {
+    background-color: #ffeb3b; /* Bright yellow for a fun and energetic feel */
+    padding: 20px;
+    text-align: center;
+    border-bottom: 3px solid #f0f0f0; /* Soft border for a clean look */
+}
+
+header img {
+    max-width: 150px;
+    height: auto;
+    animation: bounce 1s ease-in-out 2; /* Logo animation twice */
+}
+
+header h2 {
+    color: #4caf50; /* Vibrant green for a fresh look */
+    margin: 10px 0;
+}
+
+header p {
+    color: #ff5722; /* Warm orange for contrast */
+}
+
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in;
+}
+
+.auth-container h2 {
+    color: #3f51b5; /* Fun, calming blue */
+    margin-bottom: 20px;
+}
+
+.auth-container form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+}
+
+.auth-container input {
+    flex: 1 1 calc(50% - 20px);
+    margin: 5px;
+    padding: 10px;
+    border: 2px solid #ff9800; /* Bright orange border */
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+}
+
+.auth-container input[type="file"] {
+    flex: 1 1 calc(100% - 20px);
+}
+
+.auth-container button {
+    background-color: #8bc34a; /* Lively green for buttons */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 5px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.auth-container button:hover {
+    background-color: #7cb342; /* Slightly darker green on hover */
+}
+
+.auth-container p {
+    margin-top: 10px;
+}
+
+.auth-container a {
+    color: #ff5722; /* Bright orange for links */
+    text-decoration: none;
+}
+
+.auth-container a:hover {
+    text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}
+
+.auth-container {
+    background: linear-gradient(135deg, #e0f7fa, #f1f8e9); /* Light, playful gradient */
+    animation: backgroundAnimation 20s ease infinite;
+}
+
+@keyframes backgroundAnimation {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
