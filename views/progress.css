@@ -1,0 +1,107 @@
+/* Reset some basic styles */
+body, h1, h2, h3, p, table, th, td {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #007acc;
+    width: 100%;
+    color: white;
+}
+
+.logo {
+    height: 50px;
+    margin-right: 10px;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+main {
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.progress-table-section {
+    padding: 20px;
+    text-align: center;
+}
+
+h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #007acc;
+}
+
+.progress-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.progress-table th, .progress-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.progress-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.progress-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.progress-table .status {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.progress-table .status.completed {
+    color: green;
+}
+
+.progress-table .status.pending {
+    color: red;
+}
+
+.progress-table .status.in-progress {
+    color: orange;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #007acc;
+    width: 100%;
+    color: white;
+    position: fixed;
+    bottom: 0;
+}

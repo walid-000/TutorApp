@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher/Subject Information - Tutor App</title>
+    <link rel="stylesheet" href="info.css"> <!-- Link to a separate CSS file for styling -->
+</head>
+<body>
+    <header>
+        <img src="./assets/images/Design.png" alt="Tutor App Logo" class="logo">
+        <h1>Information Details</h1>
+    </header>
+
+    <main>
+        <!-- Information about the teacher or subject will be dynamically inserted here -->
+        <section id="info-section">
+            <h2 id="info-title">Teacher/Subject Name</h2>
+            <div id="info-content">
+                <p id="info-description">Description and details will be displayed here...</p>
+            </div>
+
+            <!-- Button to download the information as a PDF -->
+            <button id="download-pdf">Download Information as PDF</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Tutor App. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Sample data for demonstration
+        const data = {
+            "Math": {
+                title: "Mathematics",
+                description: "Mathematics is the study of numbers, shapes, and patterns. It is used throughout the world as an essential tool in many fields, including natural science, engineering, medicine, and social sciences."
+            },
+            "John Doe": {
+                title: "John Doe - Math Teacher",
+                description: "John Doe is an experienced Mathematics teacher with over 10 years of experience in teaching high school students. He specializes in Algebra, Calculus, and Geometry."
+            }
+            // Add more subjects or teacher data here as needed
+        };
+
+        // Function to display information based on the search
+        function displayInfo(searchTerm) {
+            const infoSection = document.getElementById('info-section');
+            const infoTitle = document.getElementById('info-title');
+            const infoDescription = document.getElementById('info-description');
+
+            if (data[searchTerm]) {
+                infoTitle.textContent = data[searchTerm].title;
+                infoDescription.textContent = data[searchTerm].description;
+            } else {
+                infoTitle.textContent = "Information Not Found";
+                infoDescription.textContent = "The information you are looking for is not available.";
+            }
+        }
+
+        // Function to download the information as a PDF
+        document.getElementById('download-pdf').addEventListener('click', function() {
+            const infoTitle = document.getElementById('info-title').textContent;
+            const infoDescription = document.getElementById('info-description').textContent;
+            
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text(infoTitle, 10, 10);
+            doc.setFontSize(12);
+            doc.text(infoDescription, 10, 30);
+            doc.save(`${infoTitle}.pdf`);
+        });
+
+        // Simulate fetching the search term from URL or previous page
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchTerm = urlParams.get('search'); // 'search' is the query parameter key
+
+        if (searchTerm) {
+            displayInfo(searchTerm);
+        } else {
+            displayInfo("Not Found"); // Fallback if no search term is provided
+        }
+    </script>
+
+    <!-- Include jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>

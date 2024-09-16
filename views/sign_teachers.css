@@ -1,30 +1,52 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f4f8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+/* Reset default margin, padding, and box-sizing */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f7f9fc;
+    color: #333;
+    line-height: 1.6;
 }
 
 header {
+    background: #004d99;
+    color: #fff;
+    padding: 20px;
     text-align: center;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+header img {
+    max-width: 150px;
+    margin-bottom: 10px;
+}
+
+header h2 {
+    margin: 0;
+    font-size: 24px;
 }
 
 .auth-container {
-    background-color: #ffffff;
+    width: 80%;
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
 }
 
 .auth-container h2 {
     margin-bottom: 20px;
-    color: #333333;
+    font-size: 22px;
+    color: #004d99;
+    border-bottom: 2px solid #004d99;
+    padding-bottom: 10px;
 }
 
 form {
@@ -32,52 +54,61 @@ form {
     flex-direction: column;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="file"],
-select {
-    padding: 10px;
+form input[type="text"],
+form input[type="email"],
+form input[type="file"],
+form textarea {
+    width: 100%;
+    padding: 12px;
     margin-bottom: 15px;
-    border: 1px solid #dddddd;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-button {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     font-size: 16px;
 }
 
-button:hover {
-    background-color: #45a049;
+form input[type="file"] {
+    border: none;
+    padding: 0;
 }
 
-.phone-input {
-    display: flex;
-    align-items: center;
+form button {
+    background-color: #004d99;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-#country-code {
-    max-width: 80px;
-    margin-right: 10px;
+form button:hover {
+    background-color: #003366;
 }
 
-p {
-    text-align: center;
+form p {
     margin-top: 20px;
+    font-size: 16px;
 }
 
-p a {
-    color: #4CAF50;
+form a {
+    color: #004d99;
     text-decoration: none;
+    font-weight: bold;
 }
 
-p a:hover {
+form a:hover {
     text-decoration: underline;
+}
+
+input[type="file"] {
+    margin-bottom: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .auth-container {
+        width: 90%;
+        padding: 15px;
+    }
 }

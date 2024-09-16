@@ -1,5 +1,3 @@
-/* style.css */
-
 /* General Styles */
 body {
     font-family: 'Arial', sans-serif;
@@ -24,7 +22,6 @@ header img.logo {
     display: block;
     margin: 0 auto 10px;
     max-width: 100px;
-    animation: rotateLogo 2s ease-in-out infinite alternate;
 }
 
 header h1 {
@@ -80,10 +77,12 @@ table th, table td {
 table th {
     background-color: #388e3c;
     color: white;
+    font-size: 1.1em;
 }
 
 table td {
     background-color: #f1f1f1;
+    font-size: 1.05em;
 }
 
 table tr:hover {
@@ -108,11 +107,6 @@ footer {
 @keyframes slideDown {
     0% { transform: translateY(-100%); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes rotateLogo {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
 
 @keyframes fadeInUp {

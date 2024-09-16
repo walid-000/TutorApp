@@ -1,5 +1,3 @@
-/* styles.css */
-
 /* General Styles */
 body {
     font-family: 'Arial', sans-serif;
@@ -7,7 +5,6 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
-    animation: fadeIn 2s ease-in;
 }
 
 /* Header */
@@ -17,14 +14,12 @@ header {
     padding: 20px;
     text-align: center;
     border-bottom: 5px solid #357ab8;
-    animation: slideDown 1s ease-out;
 }
 
 header img.logo {
     display: block;
     margin: 0 auto 10px;
     max-width: 100px;
-    animation: rotateLogo 2s ease-in-out infinite alternate;
 }
 
 header h2 {
@@ -38,17 +33,15 @@ main {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    animation: fadeInUp 1.5s ease-in-out;
 }
 
+/* Sections */
 section {
     background-color: #fff;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    animation: fadeIn 1.5s ease-in-out;
 }
 
 section h3 {
@@ -73,28 +66,57 @@ section a:hover {
     color: #1c4a6e;
 }
 
-section:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+/* Forms */
+form {
+    display: flex;
+    flex-direction: column;
 }
 
-/* Animations */
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+form label {
+    font-size: 1.1em;
+    margin: 10px 0 5px;
 }
 
-@keyframes slideDown {
-    0% { transform: translateY(-100%); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
+form input, 
+form textarea,
+form select {
+    font-size: 1em;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
-@keyframes rotateLogo {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+form button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1.1em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-@keyframes fadeInUp {
-    0% { transform: translateY(50px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
+form button:hover {
+    background-color: #357ab8;
+}
+
+/* Lists */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 10px;
+}
+
+ul li a {
+    color: #357ab8;
+    text-decoration: none;
+}
+
+ul li a:hover {
+    color: #1c4a6e;
 }

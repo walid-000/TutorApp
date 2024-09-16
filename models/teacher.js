@@ -1,10 +1,15 @@
-const mongoose = require("mongoose");
-const teachSchema = new mongoose.Schema({
-    Name : String,
-    email : String,
-    mobile_num : String,
-    education : String,
-    subjects : [String] ,
-})
-const Teacher = mongoose.model("teacher", teachSchema);
+const mongoose = require('mongoose');
+
+const teacherSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    email: { type: String, unique: true },
+    education: String,
+    certificates: String, // Store path to the certificate file
+    photo: String, // Store path to the photo file
+    address: String,
+    subjects: [String]
+});
+
+const Teacher = mongoose.model('Teacher', teacherSchema);
 module.exports = Teacher;

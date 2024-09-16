@@ -3,8 +3,6 @@ const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 const path = require('path');
 require('dotenv').config();
-const twilio = require('twilio')
-
 const app = express();
 const port = 3000;
 // connection
