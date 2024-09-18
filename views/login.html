@@ -6,15 +6,7 @@
     <title>Login - HomeTutor</title>
     <link href="login.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        // Function to handle form submission and redirection
-        function handleLogin(event) {
-            event.preventDefault(); // Prevents default form submission
-            // You can add validation logic here if needed
-            // Assuming login is successful, redirect to the home page
-            window.location.href = "main.html"; // Replace with your home page URL
-        }
-    </script>
+
 </head>
 <body>
     <header>
@@ -24,7 +16,7 @@
     
     <div class="auth-container">
         <h2>Login to HomeTutor</h2>
-        <form onsubmit="handleLogin(event)">
+        <form >
             <input type="email" placeholder="Email" required>
             <input type="password" placeholder="Password" required>
             <button type="submit">Login</button>

@@ -1,10 +1,15 @@
-const mongoose = require("mongoose");
-const studSchema = new mongoose.Schema({
-    Name : String,
-    class : String,
-    mobile_numb : String,
-    address : String,
+const mongoose = require('mongoose');
 
-})
-const Student = mongoose.model("student", studSchema);
-module.exports = Student;
+const studentSchema = new mongoose.Schema({
+    fullName: { type: String, required: true },
+    class: { type: String, required: true },
+    previousGrade: { type: String, required: true },
+    mobileNumber: { type: String, required: true },
+    email: { type: String, required: true },
+    parentMobileNumber: { type: String },
+    address: { type: String, required: true }
+});
+
+const Student = mongoose.model('student', studentSchema);
+
+module.exports = Student ;
