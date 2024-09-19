@@ -6,7 +6,6 @@
     <title>Login - HomeTutor</title>
     <link href="login.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 <body>
     <header>
@@ -16,9 +15,14 @@
     
     <div class="auth-container">
         <h2>Login to HomeTutor</h2>
-        <form >
-            <input type="email" placeholder="Email" required>
-            <input type="password" placeholder="Password" required>
+        <form action="/api/login" method="POST">
+            <select name="role" required>
+                <option value="" disabled selected>Select your role</option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+            </select>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
             <p>Don't have an account? <a href="choose.html">Sign Up</a></p>
         </form>

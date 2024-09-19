@@ -34,6 +34,12 @@ app.get('/', (req, res) => {
 
 app.post('/api/students', async (req, res) => {
     try {
+        const email = req.body.email ;
+        const existingUser = await Student.findOne({ email: email });
+        if (existingUser) {
+            console.log("User already exists");
+            return res.send("user exist")
+        }
         const student = new Student(req.body);
         await student.save();
         // res.status(201).json({message : "succesfully created user"});
@@ -42,6 +48,38 @@ app.post('/api/students', async (req, res) => {
         res.status(400).send(error);
     }
 });
+
+app.post("/api/login" , async(req , res)=>{
+    try {
+    const { role, email, password } = req.body;
+    if (role === 'student') {
+        const user = await Student.findOne({email : email});
+        if(!user){
+            return res.send('No such user');
+           }
+           if (user.password === password){
+            
+            
+            
+            const token = jwt.sign({username : user.name , role : "student"} , "thisIsMySecretKey" , {expiresIn : '1hr'});
+            res.cookie("authToken" , token)
+    
+            
+           return  res.status(200).json(user);
+    
+           }
+        // res.send('Logged in as Student');
+    } else if (role === 'teacher') {
+        // Handle teacher login
+        res.send('Logged in as Teacher');
+    } 
+}
+catch(error){
+
+}
+
+})
+
 
 // Start the server
 app.listen(port, () => {
