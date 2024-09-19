@@ -6,6 +6,8 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 const Student = require("./models/student")
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser")
 // connection
 
 mongoose.connect("mongodb://127.0.0.1:27017/tutorApp")
@@ -20,6 +22,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/tutorApp")
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 
 
@@ -52,8 +55,10 @@ app.post('/api/students', async (req, res) => {
 app.post("/api/login" , async(req , res)=>{
     try {
     const { role, email, password } = req.body;
+    console.log(role);
     if (role === 'student') {
         const user = await Student.findOne({email : email});
+        console.log(user)
         if(!user){
             return res.send('No such user');
            }
@@ -62,10 +67,10 @@ app.post("/api/login" , async(req , res)=>{
             
             
             const token = jwt.sign({username : user.name , role : "student"} , "thisIsMySecretKey" , {expiresIn : '1hr'});
-            res.cookie("authToken" , token)
+            res.cookie("authToken" , token);
     
             
-           return  res.status(200).json(user);
+           return  res.redirect("/main.html")
     
            }
         // res.send('Logged in as Student');
