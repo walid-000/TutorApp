@@ -3,181 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page - Tutor App</title>
-    <link rel="stylesheet" href="main.css">
+    <title>Main Dashboard - Tutor App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script> <!-- For cookie handling -->
     <script>
-        // Function to show the appropriate dashboard based on user role
-        function showDashboard(role) {
-            const studentSection = document.getElementById('student-section');
-            const teacherSection = document.getElementById('teacher-section');
-
-            studentSection.style.display = 'none';
-            teacherSection.style.display = 'none';
-
-            if (role === 'student') {
-                studentSection.style.display = 'block';
-            } else if (role === 'teacher') {
-                teacherSection.style.display = 'block';
-            }
-        }
-
-        // Function to filter and display the autocomplete suggestions
-        function autocomplete(input, array) {
-            let currentFocus;
-            input.addEventListener("input", function() {
-                const value = this.value;
-                closeAllLists();
-                if (!value) return false;
-                currentFocus = -1;
-                const list = document.createElement("div");
-                list.setAttribute("class", "autocomplete-items");
-                this.parentNode.appendChild(list);
-
-                array.forEach((item) => {
-                    if (item.substr(0, value.length).toUpperCase() === value.toUpperCase()) {
-                        const listItem = document.createElement("div");
-                        listItem.innerHTML = "<strong>" + item.substr(0, value.length) + "</strong>";
-                        listItem.innerHTML += item.substr(value.length);
-                        listItem.innerHTML += "<input type='hidden' value='" + item + "'>";
-                        listItem.addEventListener("click", function() {
-                            input.value = this.getElementsByTagName("input")[0].value;
-                            redirectToInfoPage(input.value);
-                            closeAllLists();
-                        });
-                        list.appendChild(listItem);
-                    }
-                });
-            });
-
-            input.addEventListener("keydown", function(e) {
-                let items = document.getElementsByClassName("autocomplete-items");
-                if (items.length > 0) items = items[0].getElementsByTagName("div");
-                if (e.keyCode == 40) { // Down key
-                    currentFocus++;
-                    addActive(items);
-                } else if (e.keyCode == 38) { // Up key
-                    currentFocus--;
-                    addActive(items);
-                } else if (e.keyCode == 13) { // Enter key
-                    e.preventDefault();
-                    if (currentFocus > -1) {
-                        if (items) items[currentFocus].click();
-                    }
-                }
-            });
-
-            function addActive(items) {
-                if (!items) return false;
-                removeActive(items);
-                if (currentFocus >= items.length) currentFocus = 0;
-                if (currentFocus < 0) currentFocus = (items.length - 1);
-                items[currentFocus].classList.add("autocomplete-active");
-            }
-
-            function removeActive(items) {
-                for (let i = 0; i < items.length; i++) {
-                    items[i].classList.remove("autocomplete-active");
-                }
-            }
-
-            function closeAllLists(elmnt) {
-                const items = document.getElementsByClassName("autocomplete-items");
-                for (let i = 0; i < items.length; i++) {
-                    if (elmnt != items[i] && elmnt != input) {
-                        items[i].parentNode.removeChild(items[i]);
-                    }
-                }
-            }
-
-            document.addEventListener("click", function (e) {
-                closeAllLists(e.target);
-            });
-        }
-
-        // Function to redirect to the info page
-        function redirectToInfoPage(item) {
-            // Redirect to the page based on the selected item
-            window.location.href = "info.html?item=" + encodeURIComponent(item);
-        }
-
-        // Example of setting the role; this should come from your server/session
         window.onload = function() {
-            const role = 'teacher';  // Change to 'teacher' to test teacher dashboard
-            showDashboard(role);
+            // Get the auth token from cookies
+            const token = Cookies.get('authToken');
 
-            // Autocomplete for Subjects and Teachers
-            const subjects = ["Mathematics", "Science", "History", "English", "Physics", "Chemistry", "Biology"];
-            const teachers = ["Mr. John Doe", "Ms. Jane Smith", "Dr. Emily Davis", "Mr. Robert Brown", "Mrs. Sarah Wilson"];
+            if (!token) {
+                // Redirect to login if no token is found
+                window.location.href = '/login.html';
+                return;
+            }
 
-            autocomplete(document.getElementById("subject-search"), subjects);
-            autocomplete(document.getElementById("teacher-search"), teachers);
+            // Decode the JWT token to get the role
+            const payload = JSON.parse(atob(token.split('.')[1]));
+
+            // Redirect based on user role
+            if (payload.role === 'student') {
+                window.location.href = 'student-dashboard.html';
+            } else if (payload.role === 'teacher') {
+                window.location.href = 'teacher-dashboard.html';
+            }
         };
     </script>
-    <script>
-        function loadDashboardStyles(userRole) {
-            var linkElement = document.createElement('link');
-            linkElement.rel = 'stylesheet';
-    
-            if (userRole === 'teacher') {
-                linkElement.href = 'teachers-dashboard.css';
-            } else if (userRole === 'student') {
-                linkElement.href = 'students-dashboard.css';
-            }
-    
-            document.head.appendChild(linkElement);
-        }
-    
-        // Example: Load styles based on user role (you can replace this with actual login logic)
-        var loggedInUserRole = 'teacher'; // or 'student'
-        loadDashboardStyles(loggedInUserRole);
-    </script>
-    
 </head>
 <body>
     <header>
-        <img src=".\assets\images\Design.png" alt="Tutor App Logo" class="logo">
-        <h1>Welcome to Tutor App</h1>
+        <h2>Main Dashboard</h2>
     </header>
-
     <main>
-        <!-- Options for Students -->
-        <section id="student-section" class="dashboard">
-            <h2>Student Dashboard</h2>
-            <div class="dashboard-item">
-                <h3>Search for Subjects</h3>
-                <form action="javascript:void(0);" class="search-form">
-                    <input id="subject-search" type="text" name="subject" placeholder="Search for subject" required>
-                </form>
-            </div>
-            <div class="dashboard-item">
-                <h3>Search for Teachers</h3>
-                <form action="javascript:void(0);" class="search-form">
-                    <input id="teacher-search" type="text" name="teacher" placeholder="Search for teachers" required>
-                </form>
-            </div>
-            <div class="dashboard-item">
-                <h3>View Assignments</h3>
-                <p><a href="student-assignments.html">View Your Assignments</a></p>
-            </div>
-        </section>
-
-        <!-- Options for Teachers -->
-        <section id="teacher-section" class="dashboard">
-            <h2>Teacher Dashboard</h2>
-
-            <div class="dashboard-item">
-                <h3>Message System</h3>
-                <p><a href="messages.html">Messages</a></p>
-            </div>
-            <div class="dashboard-item">
-                <h3>Manage Assignments</h3>
-                <p><a href="teacher-assignments.html">Manage Assignments and Student Progress</a></p>
-            </div>
-        </section>
+        <p>Redirecting...</p>
     </main>
-
-    <footer>
-        <p>&copy; 2024 Tutor App. All rights reserved.</p>
-    </footer>
 </body>
 </html>

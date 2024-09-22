@@ -14,18 +14,18 @@
 
     <div class="auth-container">
         <h2>Create Your Teacher Account</h2>
-        <form id="signup-form">
-            <input type="text" id="first-name" placeholder="First Name" required>
-            <input type="text" id="last-name" placeholder="Last Name" required>
-            <input type="email" id="email" placeholder="Email" required>
-            
-            <input type="text" id="education" placeholder="Education" reqsuired>
-            <input type="file" id="certificates" required>
-            <br>your photo<br>
-            <br>
-            <input type="file" id="photo" required>
-            <input type="text" id="address" placeholder="Address" required>
-            <input type="text" id="subjects" placeholder="Subjects You Teach" required>
+        <form id="signup-form" enctype="multipart/form-data">
+            <input type="text" id="first-name" name="firstName" placeholder="First Name" required>
+            <input type="text" id="last-name" name="lastName" placeholder="Last Name" required>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="password" placeholder=" password" required>
+            <input type="text" id="education" name="education" placeholder="Education" required>
+            <label for="certificates">Upload Your Certificates</label>
+            <input type="file" id="certificates" name="certificates" required>
+            <label for="photo">Your Photo</label>
+            <input type="file" id="photo" name="photo" required>
+            <input type="text" id="address" name="address" placeholder="Address" required>
+            <input type="text" id="subjects" name="subjects" placeholder="Subjects You Teach" required>
             <button type="submit">Sign Up</button>
             <p>Already have an account? <a href="login.html">Login</a></p>
         </form>
@@ -35,7 +35,8 @@
         document.getElementById('signup-form').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-           
+            const formData = new FormData(document.getElementById('signup-form'));
+
             try {
                 const response = await fetch('/register-teacher', {
                     method: 'POST',

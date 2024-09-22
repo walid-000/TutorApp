@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="student-dashboard.css">
+</head>
+<body>
+    <header>
+        <h2>Welcome, Student!</h2>
+    </header>
+    <main>
+        <section>
+            <h3>Search for Teachers and Subjects</h3>
+            <form id="search-form">
+                <label for="teacher-search">Search Teachers:</label>
+                <input type="text" id="teacher-search" placeholder="Search by teacher name">
+                
+                <label for="subject-search">Search Subjects:</label>
+                <input type="text" id="subject-search" placeholder="Search by subject">
+                
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <section id="search-results">
+            <!-- Search results will be populated here -->
+        </section>
+
+        <section>
+            <h3>Assignments</h3>
+            <a href="student-assignments.html">Go to Assignments</a>
+        </section>
+    </main>
+    
+    <script src="student-dashboard.js"></script>
+</body>
+</html>

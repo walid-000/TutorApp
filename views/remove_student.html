@@ -27,5 +27,25 @@
             </form>
         </section>
     </main>
+
+    <script>
+        document.getElementById('remove-student-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const studentId = document.getElementById('student-select').value;
+
+            if (studentId) {
+                const response = await fetch('/remove-student', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: studentId }),
+                });
+
+                const result = await response.json();
+                alert(result.message);
+            }
+        });
+    </script>
 </body>
 </html>

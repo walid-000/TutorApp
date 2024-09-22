@@ -26,5 +26,39 @@
             </form>
         </section>
     </main>
+    <script>
+        document.getElementById('add-student-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+        
+            // Gather form data
+            const studentData = {
+                name: document.getElementById('student-name').value,
+                email: document.getElementById('student-email').value,
+                address: document.getElementById('student-address').value
+            };
+        
+            try {
+                // Send data to backend
+                const response = await fetch('/add-student', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(studentData)
+                });
+        
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Student added successfully!');
+                } else {
+                    alert('Error adding student: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding student.');
+            }
+        });
+        </script>
+        
 </body>
 </html>

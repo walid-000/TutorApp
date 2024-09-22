@@ -25,7 +25,7 @@ header {
     padding: 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     position: absolute;
     top: 0;
     left: 0;
@@ -34,13 +34,7 @@ header {
     z-index: 1000;
 }
 
-header img {
-    max-width: 120px;
-    margin-left: 20px;
-}
-
 header h2 {
-    margin-right: 20px;
     color: #333;
     font-size: 2rem;
 }
@@ -70,7 +64,15 @@ header h2 {
     align-items: center;
 }
 
-.auth-container input {
+.auth-container label {
+    align-self: flex-start;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: bold;
+}
+
+.auth-container input,
+.auth-container select {
     width: calc(100% - 24px); /* Full width with padding consideration */
     padding: 12px;
     margin: 10px 0;
@@ -80,7 +82,8 @@ header h2 {
     transition: border-color 0.3s ease;
 }
 
-.auth-container input:focus {
+.auth-container input:focus,
+.auth-container select:focus {
     border-color: #ff6f61;
     outline: none;
 }
