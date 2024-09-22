@@ -10,6 +10,10 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser")
 const multer = require('multer');
 const Teacher = require('./models/teacher');
+const Subject = require('./models/subject');
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
 // connection
 
 mongoose.connect("mongodb://127.0.0.1:27017/tutorApp")
@@ -28,8 +32,11 @@ app.use(cookieParser())
 
 
 
+
 // Serve static files from the 'views' directory
 app.use(express.static(path.join(__dirname, 'views')));
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Storage configuration for multer to handle file uploads
 const storage = multer.diskStorage({
@@ -45,6 +52,25 @@ const storage = multer.diskStorage({
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'splash.html'));
 });
+io.on('connection', (socket) => {
+    console.log('A user connected');
+
+    // Handle messages from students
+    socket.on('studentMessage', (data) => {
+        io.emit('teacherReceiveMessage', data); // Send message to the teacher
+    });
+
+    // Handle messages from teachers
+    socket.on('teacherMessage', (data) => {
+        io.emit('studentReceiveMessage', data); // Send message to the students
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected');
+    });
+});
+
+
 
 
 app.post('/api/students', async (req, res) => {
@@ -78,72 +104,52 @@ const upload = multer({
 });
 
 
-app.post("/api/login" , async(req , res)=>{
+app.post("/api/login", async (req, res) => {
     try {
-    const { role, email, password } = req.body;
-    console.log(role);
-    if (role === 'student') {
-        const user = await Student.findOne({email : email});
-        console.log(user)
-        if(!user){
-            return res.send('No such user');
-           }
-           if (user.password === password){
-            
-            
-            
-            const token = jwt.sign({username : user.name , role : "student"} , "thisIsMySecretKey" , {expiresIn : '1hr'});
-            res.cookie("authToken" , token);
-    
-            
-           return  res.redirect("/student-Dashboard.html")
-    
-           }
-         //res.send('Logged in as Student');
-         res.redirect("student-Dashboard.html")
-    } else if (role === 'teacher') {
-        const user = await Teacher.findOne({email : email});
-        console.log(user)
-        if(!user){
-            return res.send('No such user');
-           }
-           if (user.password === password){
-            
-            
-            
-            const token = jwt.sign({username : user.name , role : "teacher"} , "thisIsMySecretKey" , {expiresIn : '1hr'});
-            res.cookie("authToken" , token);
-    
-            
-           return  res.redirect("teacher-Dashboard.html")
-    
-           }
-        //res.send('Logged in as Teacher');
-        res.redirect("/teacher-Dashboard.html")
-    } 
-}
-catch(error){
+        const { role, email, password } = req.body;
+        if (role === 'student') {
+            const user = await Student.findOne({ email });
+            if (!user || user.password !== password) {
+                return res.status(401).send('Invalid credentials');
+            }
 
-}
+            const token = jwt.sign({ username: user.name, role: "student" }, "thisIsMySecretKey", { expiresIn: '1hr' });
+            res.cookie("authToken", token);
+            return res.redirect("/student-Dashboard.html");
+        } else if (role === 'teacher') {
+            const user = await Teacher.findOne({ email });
+            if (!user || user.password !== password) {
+                return res.status(401).send('Invalid credentials');
+            }
 
-})
+            const token = jwt.sign({ username: user.name, role: "teacher" }, "thisIsMySecretKey", { expiresIn: '1hr' });
+            res.cookie("authToken", token);
+            return res.redirect("/teacher-Dashboard.html");
+        } else {
+            return res.status(400).send('Invalid role');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+});
 
 app.post('/register-teacher', upload.fields([{ name: 'certificates', maxCount: 1 }, { name: 'photo', maxCount: 1 }]), async (req, res) => {
     try {
-        // Extracting form data
         const { firstName, lastName, email, education, address, subjects } = req.body;
 
-        // Check if a teacher with the same email already exists
+        if (!req.files['certificates'] || !req.files['photo']) {
+            return res.status(400).json({ error: 'Certificates and photo are required.' });
+        }
+
         const existingTeacher = await Teacher.findOne({ email });
         if (existingTeacher) {
             return res.status(400).json({ error: 'Teacher already exists.' });
         }
 
-        // Extracting file paths
         const certificatePath = req.files['certificates'][0].path;
         const photoPath = req.files['photo'][0].path;
 
-        // Create a new teacher document
         const newTeacher = new Teacher({
             firstName,
             lastName,
@@ -155,15 +161,46 @@ app.post('/register-teacher', upload.fields([{ name: 'certificates', maxCount: 1
             subjects
         });
 
-        // Save teacher to the database
         await newTeacher.save();
-
         res.status(201).json({ message: 'Teacher registered successfully.' });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'An error occurred during registration.' });
     }
 });
+
+// Teacher data API
+app.get('/api/teacher/:username', async (req, res) => {
+    try {
+        const teacher = await Teacher.findOne({ name: req.params.username });
+        if (!teacher) {
+            return res.status(404).send('Teacher not found');
+        }
+        res.json({ name: teacher.name, photo: teacher.photo });
+    } catch (error) {
+        res.status(500).send('Error fetching teacher data');
+    }
+});
+
+// Messages API
+app.get('/api/messages', async (req, res) => {
+    try {
+        const messages = await Message.find({ to: req.user._id });
+        res.json(messages);
+    } catch (error) {
+        res.status(500).send('Error fetching messages');
+    }
+});
+//app.get('/api/messages', authMiddleware, async (req, res) => {
+  //  try {
+    //    const messages = await Message.find({ to: req.user.username });
+      //  res.json(messages);
+    //} catch (error) {
+      //  res.status(500).send('Error fetching messages');
+    //}
+//});
+
+
 app.post('/add-student', async (req, res) => {
     const { name, email, address } = req.body;
 

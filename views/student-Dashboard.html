@@ -8,8 +8,22 @@
 </head>
 <body>
     <header>
-        <h2>Welcome, Student!</h2>
+        <div class="header-content">
+            <h2>Welcome, <span id="student-name"></span>!</h2>
+            <div class="profile-menu">
+                <img id="student-photo" src="" alt="Profile Photo">
+                <div class="dropdown">
+                    <button class="dropbtn">Menu</button>
+                    <div class="dropdown-content">
+                        <a href="student-settings.html">Settings</a>
+                        <a href="messages.html">Messages</a>
+                        <a id="sign-out-btn" href="#">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
+
     <main>
         <section>
             <h3>Search for Teachers and Subjects</h3>
@@ -20,7 +34,7 @@
                 <label for="subject-search">Search Subjects:</label>
                 <input type="text" id="subject-search" placeholder="Search by subject">
                 
-                <button type="submit">Search</button>
+                <button type="submit" class="btn">Search</button>
             </form>
         </section>
 
@@ -30,10 +44,11 @@
 
         <section>
             <h3>Assignments</h3>
-            <a href="student-assignments.html">Go to Assignments</a>
+            <a href="student-assignments.html" class="btn">Go to Assignments</a>
         </section>
     </main>
     
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script src="student-dashboard.js"></script>
 </body>
 </html>

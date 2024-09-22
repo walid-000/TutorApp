@@ -48,7 +48,7 @@
     <footer>
         <p>&copy; 2024 Tutor App. All rights reserved.</p>
     </footer>
-
+    
     <script>
         function openChat(teacherName) {
             document.querySelector('.chat-header h2').innerText = teacherName;
@@ -69,5 +69,30 @@
             }
         }
     </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+    
+        // Send student message
+        document.getElementById('sendMessageBtn').addEventListener('click', function() {
+            const message = document.getElementById('messageInput').value;
+            socket.emit('studentMessage', { text: message, studentId: '12345' }); // Student sends a message
+        });
+    
+        // Teacher receives the message in real-time
+        socket.on('teacherReceiveMessage', (data) => {
+            console.log('New message from student:', data.text);
+        });
+        socket.on('teacherReceiveMessage', (data) => {
+            appendMessage(`${data.teacherName}: ${data.text}`, 'teacher');
+        });
+        socket.emit('studentMessage', {
+            studentName: payload.username,
+            text: message
+        });
+
+
+    </script>
+    
 </body>
 </html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Messaging</title>
+    <link rel="stylesheet" href="teacher-messages.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h2>Messages</h2>
+            <div class="profile-menu">
+                <img id="teacher-photo" src="" alt="Profile Photo">
+                <div class="dropdown">
+                    <button class="dropbtn">Menu</button>
+                    <div class="dropdown-content">
+                        <a href="teacher-dashboard.html">Dashboard</a>
+                        <a href="teacher-settings.html">Settings</a>
+                        <a id="sign-out-btn" href="#">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="chat-section">
+            <h3>Chat with Students</h3>
+            <div id="chat-box"></div>
+            <div class="message-input">
+                <input type="text" id="message-input" placeholder="Type your message...">
+                <button id="send-message-btn">Send</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript logic for socket connection -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script>
+        const socket = io();
+
+        // Get auth token and teacher info
+        const token = Cookies.get('authToken');
+        const payload = JSON.parse(atob(token.split('.')[1]));
+
+        // Fetch teacher data for profile photo
+        fetch(`/api/teacher/${payload.username}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('teacher-photo').src = data.photo || '1726811101742-p2.png';
+            });
+
+        // Handle message sending
+        document.getElementById('send-message-btn').addEventListener('click', () => {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                socket.emit('teacherMessage', {
+                    teacherName: payload.username,
+                    text: message
+                });
+                messageInput.value = '';
+                appendMessage(`You: ${message}`, 'teacher');
+            }
+        });
+        
+
+        // Display incoming student messages
+        socket.on('studentReceiveMessage', (data) => {
+            appendMessage(`${data.studentName}: ${data.text}`, 'student');
+        });
+        //to send the messege to the teacher 
+        socket.emit('teacherMessage', {
+            teacherName: payload.username,
+            text: message
+        });
+
+
+        // Append message to the chat box
+        function appendMessage(message, type) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', type);
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Sign out functionality
+        document.getElementById('sign-out-btn').addEventListener('click', () => {
+            Cookies.remove('authToken');
+            window.location.href = '/login.html';
+        });
+    </script>
+</body>
+</html>

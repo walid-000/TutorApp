@@ -7,14 +7,95 @@
     <link rel="stylesheet" href="teacher-dashboard.css">
 </head>
 <body>
+    <!-- Header with profile menu and sign-out -->
     <header>
-        <h2>Welcome, Teacher!</h2>
+        <div class="header-content">
+            <h2>Welcome, <span id="teacher-name"></span>!</h2>
+            <div class="profile-menu">
+                <img id="teacher-photo" src="" alt="Profile Photo">
+                <div class="dropdown">
+                    <button class="dropbtn">Menu</button>
+                    <div class="dropdown-content">
+                        <a href="teacher-settings.html">Settings</a>
+                        <a href="teacher-messege.html">messeges</a>
+                        <button></button><a id="sign-out-btn" href="#">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
+
+    <!-- Main content -->
     <main>
         <section>
-            <h3>Your </h3>
-            <a href="teacher-assignments.html">Go to Assignments</a>
+            <h3>Your Dashboard</h3>
+            <a href="teacher-assignments.html" class="dashboard-link">Manage Your Assignments</a>
+        </section>
+
+        <!-- Messages section -->
+        <section class="messages-section">
+            <h3>Messages from Students</h3>
+            <div id="messages-list"></div>
         </section>
     </main>
+
+    <!-- JavaScript logic to handle the token, fetch data, and sign out -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script>
+        // Fetch teacher data from backend
+        window.onload = function() {
+            const token = Cookies.get('authToken');
+            
+            // Check if the token exists
+            if (!token) {
+                console.log("No token found. Redirecting to login...");
+                window.location.href = '/login.html';
+                return;
+            }
+
+            // Decode the token payload and log it for debugging
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            console.log("Token payload:", payload);  // Debugging: check the payload
+
+            // Check if the role is 'teacher'
+            if (!payload.role || payload.role !== 'teacher') {
+                console.log("Role is not teacher. Redirecting to login...");
+                //window.location.href = '/login.html';
+                return;
+            }
+
+            // Fetch teacher's name and photo from backend
+            fetch(`/api/teacher/${payload.username}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('teacher-name').textContent = data.name;
+                    document.getElementById('teacher-photo').src = data.photo || '1726811101742-p2.png';
+                })
+                .catch(error => {
+                    console.log("Error fetching teacher data:", error);
+                    // Optional: redirect or handle the error gracefully
+                });
+
+            // Sign out functionality
+            document.getElementById('sign-out-btn').addEventListener('click', function() {
+                Cookies.remove('authToken');  // Remove the auth token
+                window.location.href = '/login.html';  // Redirect to login page
+            });
+
+            // Fetch and display student messages
+            fetch('/api/messages')
+                .then(response => response.json())
+                .then(messages => {
+                    const messagesList = document.getElementById('messages-list');
+                    messagesList.innerHTML = '';
+                    messages.forEach(message => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.classList.add('message');
+                        messageDiv.innerHTML = `<p><strong>${message.studentName}:</strong> ${message.text}</p>`;
+                        messagesList.appendChild(messageDiv);
+                    });
+                });
+        };
+    </script>
 </body>
 </html>
