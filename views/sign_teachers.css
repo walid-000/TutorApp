@@ -112,3 +112,18 @@ input[type="file"] {
         padding: 15px;
     }
 }
+form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+form input[type="password"]:focus {
+    border-color: #004d99; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+

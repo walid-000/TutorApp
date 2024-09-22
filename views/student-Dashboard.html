@@ -39,13 +39,20 @@
         </section>
 
         <section id="search-results">
-            <!-- Search results will be populated here -->
         </section>
 
         <section>
             <h3>Assignments</h3>
             <a href="student-assignments.html" class="btn">Go to Assignments</a>
         </section>
+        <button id="signout-button">Sign Out</button>
+        <script>
+            document.getElementById('signout-button').onclick = function() {
+                window.location.href = '/login.html'; // Redirect without calling the logout endpoint
+            };
+        </script>
+        
+
     </main>
     
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>

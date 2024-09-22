@@ -47,6 +47,33 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname); // Unique filename
     }
 });
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter
+});
+
+app.post('/submit-assignment', upload.single('assignment_file'), (req, res) => {
+    try {
+        // Form fields
+        const assignmentTitle = req.body.assignment_title;
+        const submissionNotes = req.body.submission_notes;
+        
+        // File data
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        // Simulate successful submission
+        return res.status(200).json({ message: 'Assignment submitted successfully!' });
+    } catch (error) {
+        console.error('Error while submitting assignment:', error);
+        return res.status(500).json({ error: 'Failed to submit assignment' });
+    }
+});
+
+
 
 // Serve the splash.html file
 app.get('/', (req, res) => {
@@ -98,12 +125,6 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({ 
-    storage: storage,
-    fileFilter: fileFilter
-});
-
-
 app.post("/api/login", async (req, res) => {
     try {
         const { role, email, password } = req.body;
@@ -132,6 +153,10 @@ app.post("/api/login", async (req, res) => {
         console.error(error);
         res.status(500).send('Server error');
     }
+});
+app.post('/logout', (req, res) => {
+    res.clearCookie('authToken'); // Clear the cookie
+    res.status(200).json({ message: 'Logged out successfully' });
 });
 
 app.post('/register-teacher', upload.fields([{ name: 'certificates', maxCount: 1 }, { name: 'photo', maxCount: 1 }]), async (req, res) => {

@@ -18,7 +18,7 @@
                     <div class="dropdown-content">
                         <a href="teacher-settings.html">Settings</a>
                         <a href="teacher-messege.html">messeges</a>
-                        <button></button><a id="sign-out-btn" href="#">Sign Out</a>
+                        <a id="sign-out-btn" href="#">Sign Out</a>
                     </div>
                 </div>
             </div>
@@ -37,6 +37,12 @@
             <h3>Messages from Students</h3>
             <div id="messages-list"></div>
         </section>
+        <button id="signout-button">Sign Out</button>
+        <script>
+            document.getElementById('signout-button').onclick = function() {
+                window.location.href = '/login.html'; // Redirect without calling the logout endpoint
+            };
+        </script>
     </main>
 
     <!-- JavaScript logic to handle the token, fetch data, and sign out -->

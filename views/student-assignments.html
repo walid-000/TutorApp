@@ -13,40 +13,94 @@
     </header>
 
     <main>
-        <!-- Assignments Section -->
+    
         <section class="assignments-section">
             <h3>Assignments Given to You</h3>
             <p><a href="view_assignments.html">View All Assignments</a></p>
         </section>
 
-        <!-- Progress Tracking Section -->
+        
         <section class="progress-section">
             <h3>Progress Tracking</h3>
             <p><a href="progress.html">View Your Progress</a></p>
         </section>
 
-        <!-- Submission Deadlines Section -->
+        
         <!-- <section class="deadlines-section">
             <h3>Submission Deadlines</h3>
             <p><a href="submission_deadline.html">View Submission Dates</a></p>
         </section> -->
 
-        <!-- Assignment Submission Section -->
+        
         <section class="submission-section">
             <h3>Submit Your Assignment</h3>
-            <form action="submit_assignment.html" method="post" enctype="multipart/form-data" class="submission-form">
+            <form id="submission-form" enctype="multipart/form-data" class="submission-form">
                 <label for="assignment-title">Assignment Title:</label>
                 <input type="text" id="assignment-title" name="assignment_title" placeholder="Enter assignment title" required>
-
+        
                 <label for="assignment-file">Upload Assignment:</label>
                 <input type="file" id="assignment-file" name="assignment_file" required>
-
+        
                 <label for="submission-notes">Notes (optional):</label>
                 <textarea id="submission-notes" name="submission_notes" rows="4" placeholder="Enter any additional notes"></textarea>
-
+        
                 <button type="submit">Submit Assignment</button>
             </form>
         </section>
+        
+        <script>
+            document.getElementById('submission-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const fileInput = document.getElementById('assignment-file');
+    const file = fileInput.files[0];
+
+    // Validate file to 5mb
+    if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+    }
+
+    
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+        alert('Only PDF or DOCX files are allowed');
+        return;
+    }
+
+
+    const submitButton = document.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+
+    try {
+        const response = await fetch('/submit-assignment', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('Assignment submitted successfully!');
+            window.location.href = '/uploads'; // Redirect to uploads section
+        } else {
+            console.error('Backend error:', result.error);  // Log the backend error
+            alert('Error submitting assignment: ' + result.error);
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit Assignment';
+        }
+    } catch (error) {
+        console.error('Submission failed:', error.message);
+        alert('Error submitting assignment.');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit Assignment';
+    }
+});
+
+        </script>
+        
     </main>
 
     <footer>
