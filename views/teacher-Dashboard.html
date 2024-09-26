@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="teacher-dashboard.css">
+    <!-- Prevent browser from caching this page -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  
 </head>
 <body>
     <!-- Header with profile menu and sign-out -->
@@ -37,14 +42,18 @@
             <h3>Messages from Students</h3>
             <div id="messages-list"></div>
         </section>
-        <button id="signout-button">Sign Out</button>
         <script>
-            document.getElementById('signout-button').onclick = function() {
+            document.getElementById('sign-out-btn').onclick = function() {
                 window.location.href = '/login.html'; // Redirect without calling the logout endpoint
             };
         </script>
     </main>
-
+    <script>
+        document.getElementById('sign-out-btn').onclick = function() {
+            Cookies.remove('authToken'); 
+            window.location.href = '/login.html'; // Redirect without calling the logout endpoint
+        };
+    </script>
     <!-- JavaScript logic to handle the token, fetch data, and sign out -->
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script>
@@ -87,6 +96,7 @@
                 Cookies.remove('authToken');  // Remove the auth token
                 window.location.href = '/login.html';  // Redirect to login page
             });
+            
 
             // Fetch and display student messages
             fetch('/api/messages')

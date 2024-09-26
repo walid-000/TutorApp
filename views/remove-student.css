@@ -1,0 +1,76 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Light background for contrast */
+}
+
+header {
+    background-color: #007bff; /* Blue header color */
+    color: white; /* White text color */
+    padding: 20px;
+    text-align: center;
+}
+
+header .logo {
+    max-width: 150px; /* Limit logo size */
+    margin-bottom: 10px;
+}
+
+main {
+    max-width: 600px; /* Center content on the page */
+    margin: 30px auto; /* Center the main section */
+    padding: 20px;
+    background: white; /* White background for the form section */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+h2, h3 {
+    margin: 0 0 15px; /* Space below headings */
+}
+
+label {
+    display: block; /* Block display for labels */
+    margin-bottom: 5px; /* Space below labels */
+    font-weight: bold; /* Bold font for better readability */
+}
+
+input[type="text"], select {
+    width: 100%; /* Full width inputs and selects */
+    padding: 10px; /* Padding for comfort */
+    margin-bottom: 15px; /* Space below inputs */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+input[type="text"]:focus, select:focus {
+    border-color: #007bff; /* Blue border on focus */
+    outline: none; /* Remove default outline */
+}
+
+button {
+    background-color: #007bff; /* Blue button background */
+    color: white; /* White text */
+    padding: 10px 15px; /* Padding for the button */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+button:focus {
+    outline: none; /* Remove outline on focus */
+}
+
+@media (max-width: 600px) {
+    main {
+        margin: 15px; /* Reduce margins on small screens */
+    }
+}

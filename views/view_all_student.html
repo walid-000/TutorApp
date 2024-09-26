@@ -15,21 +15,44 @@
     <main>
         <div class="student-list">
             <h3>The students who are currently connected with us:</h3>
-            <ul>
-                <li>Animesh Jha</li>
-                <li>Govind Jha</li>
-                <li>Pooja Patel</li>
-                <li>Rohan Sharma</li>
-                <li>Anjali Mehta</li>
-                <li>Kavita Singh</li>
-                <li>Rajesh Verma</li>
-                <li>Neha Gupta</li>
-                <li>Siddharth Kumar</li>
-                <li>Priya Deshmukh</li>
+            <ul id="student-list">
+                <!-- This will be dynamically populated -->
             </ul>
         </div>
     </main>
 
+    <!-- Add the script just before the closing body tag -->
+    <script>
+        async function loadStudents() {
+            try {
+                const response = await fetch('/students');
+                const students = await response.json();
+                const studentList = document.getElementById('student-list');
+                
+                // Clear existing list before adding dynamically fetched data
+                studentList.innerHTML = '';
+                
+                // If no students are found, display a message
+                if (students.length === 0) {
+                    const li = document.createElement('li');
+                    li.textContent = 'No students are currently enrolled in the course.';
+                    studentList.appendChild(li);
+                } else {
+                    students.forEach(course => {
+                        const li = document.createElement('li');
+                        li.textContent = `${course.studentId.name} - ${course.courseName}`;
+                        studentList.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching students:', error);
+            }
+        }
+
+        // Load students when the page loads
+        window.onload = loadStudents;
+    </script>
+    
     <footer>
         <p>&copy; 2024 Tutor App. All rights reserved.</p>
     </footer>

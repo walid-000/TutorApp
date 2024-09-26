@@ -16,49 +16,42 @@
         <section>
             <h3>New Student Form</h3>
             <form id="add-student-form">
-                <label for="student-name">Name:</label>
-                <input type="text" id="student-name" placeholder="Student Name" required>
                 <label for="student-email">Email:</label>
                 <input type="email" id="student-email" placeholder="Student Email" required>
-                <label for="student-address">Address:</label>
-                <input type="text" id="student-address" placeholder="Student Address" required>
+                <label for="course-name">Course Name:</label>
+                <input type="text" id="course-name" placeholder="Course Name" required>
                 <button type="submit">Add Student</button>
             </form>
+            
+            <script>
+                document.getElementById('add-student-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const studentData = {
+                        email: document.getElementById('student-email').value,
+                        courseName: document.getElementById('course-name').value
+                    };
+                    
+                    try {
+                        const response = await fetch('/add-student', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(studentData)
+                        });
+                        
+                        const result = await response.json();
+                        alert(result.message);
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Failed to add student.');
+                    }
+                });
+            </script>
         </section>
     </main>
-    <script>
-        document.getElementById('add-student-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-        
-            // Gather form data
-            const studentData = {
-                name: document.getElementById('student-name').value,
-                email: document.getElementById('student-email').value,
-                address: document.getElementById('student-address').value
-            };
-        
-            try {
-                // Send data to backend
-                const response = await fetch('/add-student', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(studentData)
-                });
-        
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Student added successfully!');
-                } else {
-                    alert('Error adding student: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error adding student.');
-            }
-        });
-        </script>
-        
+
+    <footer>
+        <p>&copy; 2024 Tutor App. All rights reserved.</p>
+    </footer>
 </body>
 </html>

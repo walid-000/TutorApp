@@ -31,27 +31,92 @@
                 <label for="teacher-search">Search Teachers:</label>
                 <input type="text" id="teacher-search" placeholder="Search by teacher name">
                 
-                <label for="subject-search">Search Subjects:</label>
-                <input type="text" id="subject-search" placeholder="Search by subject">
+                <label for="course-search">Search courses:</label> 
+                <input type="text" id="course-search" placeholder="Search by course"> 
                 
                 <button type="submit" class="btn">Search</button>
             </form>
-        </section>
-
-        <section id="search-results">
+            <div id="search-results"></div> <!-- Added a div to display results -->
         </section>
 
         <section>
             <h3>Assignments</h3>
             <a href="student-assignments.html" class="btn">Go to Assignments</a>
         </section>
-        <button id="signout-button">Sign Out</button>
+        
         <script>
-            document.getElementById('signout-button').onclick = function() {
+            document.getElementById('sign-out-btn').onclick = function() {
+                Cookies.remove('authToken'); 
                 window.location.href = '/login.html'; // Redirect without calling the logout endpoint
             };
         </script>
-        
+
+        <script>
+            document.getElementById('search-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const teacherName = document.getElementById('teacher-search').value;
+    const courseName = document.getElementById('course-search').value;
+
+    const resultsContainer = document.getElementById('search-results');
+    resultsContainer.innerHTML = ''; // Clear previous results
+
+    // Fetch teachers if a name is entered
+    if (teacherName) {
+        try {
+            const response = await fetch(`/api/teachers?name=${teacherName}`);
+            const teachers = await response.json();
+
+            console.log('Fetched teachers:', teachers); // Log the fetched teachers
+
+            // Populate results with teacher cards
+            if (teachers.length > 0) {
+                teachers.forEach(teacher => {
+                    const teacherCard = document.createElement('div');
+                    teacherCard.className = 'card teacher-info'; // Add this class for styling
+                    teacherCard.innerHTML = `
+                        <h4>${teacher.name}</h4>
+                        <p>Email: ${teacher.email}</p>
+                        <p>Mobile: ${teacher.mobile}</p>
+                        <p>Subjects: ${teacher.subjects.join(', ')}</p>
+                    `;
+                    resultsContainer.appendChild(teacherCard);
+                });
+            } else {
+                resultsContainer.innerHTML = '<p>No teachers found.</p>'; // Inform if no teachers found
+            }
+        } catch (error) {
+            console.error('Error fetching teachers:', error);
+            resultsContainer.innerHTML = '<p>Error fetching teachers.</p>';
+        }
+    }
+
+    // Fetch courses if a course name is entered
+    if (courseName) {
+        try {
+            const response = await fetch(`/api/courses?name=${courseName}`);
+            const courses = await response.json();
+
+            // Populate results with course cards
+            courses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'card course-info'; // Add this class for styling
+                courseCard.innerHTML = `
+                    <h4>${course.title}</h4>
+                    <p>Description: ${course.description}</p>
+                    <p>Teacher: ${course.teacher}</p>
+                    <p>Duration: ${course.duration}</p>
+                `;
+                resultsContainer.appendChild(courseCard);
+            });
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+            resultsContainer.innerHTML = '<p>Error fetching courses.</p>';
+        }
+    }
+});
+
+        </script>
 
     </main>
     

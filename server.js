@@ -6,6 +6,8 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 const Student = require("./models/student")
+const Course = require('./models/course');
+const nodemailer = require('nodemailer');
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser")
 const multer = require('multer');
@@ -13,6 +15,8 @@ const Teacher = require('./models/teacher');
 const Subject = require('./models/subject');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const { checkAuth , LogRequestMiddlewarefn} = require("./middleware/global")
+
 
 // connection
 
@@ -29,6 +33,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/tutorApp")
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser())
+app.use( checkAuth)
+app.use(LogRequestMiddlewarefn("log.txt"))
 
 
 
@@ -36,6 +42,15 @@ app.use(cookieParser())
 // Serve static files from the 'views' directory
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'application/pdf') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
 
 
 // Storage configuration for multer to handle file uploads
@@ -51,8 +66,11 @@ const upload = multer({
     storage: storage,
     fileFilter: fileFilter
 });
+mongoose.set('strictPopulate', false);
 
 app.post('/submit-assignment', upload.single('assignment_file'), (req, res) => {
+    console.log(req.body); 
+    console.log(req.file);
     try {
         // Form fields
         const assignmentTitle = req.body.assignment_title;
@@ -110,20 +128,18 @@ app.post('/api/students', async (req, res) => {
         }
         const student = new Student(req.body);
         await student.save();
-        // res.status(201).json({message : "succesfully created user"});
+         res.status(201).json({message : "succesfully created user"});
         res.redirect("/login.html")
     } catch (error) {
         res.status(400).send(error);
     }
 });
 // File filter for certificates and photos
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'application/pdf') {
-        cb(null, true);
-    } else {
-        cb(null, false);
-    }
-};
+
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    next();
+});
 
 app.post("/api/login", async (req, res) => {
     try {
@@ -138,7 +154,9 @@ app.post("/api/login", async (req, res) => {
             res.cookie("authToken", token);
             return res.redirect("/student-Dashboard.html");
         } else if (role === 'teacher') {
+            console.log(role , email , password)
             const user = await Teacher.findOne({ email });
+            console.log("in db :" , user)
             if (!user || user.password !== password) {
                 return res.status(401).send('Invalid credentials');
             }
@@ -158,10 +176,14 @@ app.post('/logout', (req, res) => {
     res.clearCookie('authToken'); // Clear the cookie
     res.status(200).json({ message: 'Logged out successfully' });
 });
+const bcrypt = require('bcrypt');
 
 app.post('/register-teacher', upload.fields([{ name: 'certificates', maxCount: 1 }, { name: 'photo', maxCount: 1 }]), async (req, res) => {
+    console.log(req.body.password); 
+    console.log(req.body);  
+    console.log(req.files); 
     try {
-        const { firstName, lastName, email, education, address, subjects } = req.body;
+        const { firstName, lastName, email, education, address, subjects, password } = req.body;
 
         if (!req.files['certificates'] || !req.files['photo']) {
             return res.status(400).json({ error: 'Certificates and photo are required.' });
@@ -174,6 +196,9 @@ app.post('/register-teacher', upload.fields([{ name: 'certificates', maxCount: 1
 
         const certificatePath = req.files['certificates'][0].path;
         const photoPath = req.files['photo'][0].path;
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
 
         const newTeacher = new Teacher({
             firstName,
@@ -183,7 +208,8 @@ app.post('/register-teacher', upload.fields([{ name: 'certificates', maxCount: 1
             certificates: certificatePath,
             photo: photoPath,
             address,
-            subjects
+            subjects,
+            password : password, 
         });
 
         await newTeacher.save();
@@ -191,8 +217,29 @@ app.post('/register-teacher', upload.fields([{ name: 'certificates', maxCount: 1
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'An error occurred during registration.' });
+        console.error('Error:', error.stack); // This will show where the error occurred
     }
 });
+// Inside teachers.js
+app.get('/api/teachers', async (req, res) => {
+    const { name } = req.query; // Get the teacher name from query parameters
+    try {
+        const query = name ? { name: { $regex: name, $options: 'i' } } : {}; // Case-insensitive search
+
+        console.log('Searching for teachers with query:', query); // Log the query
+
+        const teachers = await Teacher.find(query); // Fetch teachers from the database
+
+        console.log('Found teachers:', teachers); // Log the found teachers
+
+        res.status(200).json(teachers);
+    } catch (error) {
+        console.error('Error fetching teachers:', error);
+        res.status(500).json({ message: 'Failed to fetch teachers.' });
+    }
+});
+
+
 
 // Teacher data API
 app.get('/api/teacher/:username', async (req, res) => {
@@ -224,48 +271,121 @@ app.get('/api/messages', async (req, res) => {
       //  res.status(500).send('Error fetching messages');
     //}
 //});
+app.post('/api/courses', async (req, res) => {
+    const { name, startDate, endDate } = req.body;
+
+    try {
+        // Check if a course with the same name is already active
+        const existingCourse = await Course.findOne({
+            courseName: name,
+            $or: [
+                { startDate: { $lte: new Date(endDate) } },
+                { endDate: { $gte: new Date(startDate) } }
+            ]
+        });
+
+        // If an active course exists, send a response
+        if (existingCourse) {
+            return res.status(400).json({ message: 'A course with this name is already active until ' + existingCourse.endDate });
+        }
+
+        // Create a new course
+        const newCourse = new Course({
+            courseName: name,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate)
+        });
+        
+        await newCourse.save();
+        //const courses = await Course.find().populate('studentId');
+        res.status(201).json({ message: 'Course created successfully!' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to create course.' });
+    }
+});
+app.get('/api/courses', async (req, res) => {
+    const { name } = req.query; // Get the course name from the query parameter
+    try {
+        const courses = await Course.find({
+            courseName: { $regex: name, $options: 'i' } // Use correct field
+        });
+        res.status(200).json(courses);
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        res.status(500).json({ message: 'Failed to fetch courses.' });
+    }
+});
+
 
 
 app.post('/add-student', async (req, res) => {
-    const { name, email, address } = req.body;
-
-    // Simple validation
-    if (!name || !email || !address) {
-        return res.status(400).json({ message: 'Please fill in all fields' });
-    }
-
+    const { email, courseName } = req.body;
     try {
-        // Create new student and save to DB
-        const student = new Student({
-            name: name,
-            email: email,
-            address: address
-        });
-
-        await student.save();
-
-        res.status(201).json({ message: 'Student added successfully' });
-    } catch (error) {
-        // Check if student with the same email already exists
-        if (error.code === 11000) {
-            return res.status(400).json({ message: 'Email already exists' });
+        // Check if the student exists in the database
+        const student = await Student.findOne({ email });
+        if (!student) {
+            return res.status(400).json({ message: 'No student with this email in the database.' });
         }
 
-        console.error('Error saving student:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-app.post('/remove-student', (req, res) => {
-    const { id } = req.body;
+        // Check if the course already exists
+        let course = await Course.findOne({ courseName });
+        if (!course) {
+            // If not, create a new course
+            course = new Course({
+                courseName,
+                students: [student._id], // Add the student to the course
+                startDate: new Date(), // Set your desired start date
+                endDate: new Date() // Set your desired end date
+            });
+            await course.save(); // Save the new course
+            return res.status(200).json({ message: 'Student added to course successfully.' });
+        } else {
+            // If the course already exists, check if the student is already enrolled
+            if (course.students.includes(student._id)) {
+                return res.status(400).json({ message: 'Student is already added to this course.' });
+            } else {
+                // If not, add the student to the existing course
+                course.students.push(student._id);
+            }
+        }
 
-    const index = students.indexOf(id);
-    if (index !== -1) {
-        students.splice(index, 1);
-        res.json({ message: `Removed ${id} successfully!` });
-    } else {
-        res.status(404).json({ message: 'Student not found!' });
+        await course.save(); // Save the updated course
+        return res.status(200).json({ message: 'Student added to course successfully.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
     }
 });
+
+app.get('/api/students', async (req, res) => {
+    try {
+        const students = await Student.find(); // Fetch students from the database
+        res.status(200).json(students);
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        res.status(500).json({ message: 'Failed to fetch students.' });
+    }
+});
+
+
+
+app.post('/remove-student', async (req, res) => {
+    const { id } = req.body; // Student's ObjectId
+
+    try {
+        // Update the course to remove the studentId
+        await Course.updateOne(
+            { 'students': id }, // Find course with this studentId
+            { $pull: { 'students': id } } // Remove studentId from the course
+        );
+        res.status(200).json({ message: 'Student removed from the course.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to remove student from the course.' });
+    }
+});
+
 app.get('/api/search/teachers', async (req, res) => {
     const query = req.query.q;
     try {
@@ -283,6 +403,15 @@ app.get('/api/search/subjects', async (req, res) => {
         res.json(subjects);
     } catch (error) {
         res.status(500).send('Error fetching subjects');
+    }
+});
+app.get('/students', async (req, res) => {
+    try {
+        const courses = await Course.find().populate('studentId');
+        res.status(200).json(courses);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to retrieve students.' });
     }
 });
 

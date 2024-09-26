@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remove Student - Tutor App</title>
-    <link rel="stylesheet" href="teacher-assign.css">
+    <link rel="stylesheet" href="remove-student.css">
 </head>
 <body>
     <header>
@@ -15,13 +15,12 @@
     <main>
         <section>
             <h3>Select Student to Remove</h3>
+            <label for="search-student">Search Student:</label>
+            <input type="text" id="search-student" placeholder="Type to search..." oninput="filterStudents()">
             <form id="remove-student-form">
                 <label for="student-select">Select Student:</label>
                 <select id="student-select" required>
-                    <option value="">--Select a Student--</option>
-                    <option value="student1">Student 1</option>
-                    <option value="student2">Student 2</option>
-                    <!-- More students -->
+                    <!-- Dynamically populated later -->
                 </select>
                 <button type="submit">Remove Student</button>
             </form>
@@ -29,23 +28,70 @@
     </main>
 
     <script>
+        let students = []; // Store all students to enable filtering
+
+        // Fetch students and populate the dropdown when the page loads
+        async function fetchStudents() {
+            try {
+                const response = await fetch('/api/students'); // Endpoint to get students
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                students = await response.json(); // Store fetched students
+
+                populateDropdown(students);
+            } catch (error) {
+                console.error('Error fetching students:', error);
+                alert('Failed to load students. Please try again later.');
+            }
+        }
+
+        function populateDropdown(studentsList) {
+            const studentSelect = document.getElementById('student-select');
+            studentSelect.innerHTML = ''; // Clear existing options
+
+            // Populate the dropdown with students
+            studentsList.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student._id; // Assuming the student document has an _id field
+                option.textContent = `${student.name} (${student.email})`; // Display name and email
+                studentSelect.appendChild(option);
+            });
+        }
+
+        function filterStudents() {
+            const searchValue = document.getElementById('search-student').value.toLowerCase();
+            const filteredStudents = students.filter(student => 
+                student.name.toLowerCase().includes(searchValue) || 
+                student.email.toLowerCase().includes(searchValue)
+            );
+
+            populateDropdown(filteredStudents); // Update dropdown with filtered students
+        }
+
         document.getElementById('remove-student-form').addEventListener('submit', async function(event) {
             event.preventDefault();
             const studentId = document.getElementById('student-select').value;
 
-            if (studentId) {
+            try {
                 const response = await fetch('/remove-student', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ id: studentId }),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: studentId })
                 });
 
                 const result = await response.json();
                 alert(result.message);
+                // Optionally, fetch students again to refresh the dropdown after removal
+                fetchStudents();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to remove student.');
             }
         });
+
+        // Call fetchStudents when the script loads
+        fetchStudents();
     </script>
 </body>
 </html>
