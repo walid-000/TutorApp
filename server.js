@@ -16,6 +16,8 @@ const Subject = require('./models/subject');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const { checkAuth , LogRequestMiddlewarefn} = require("./middleware/global")
+const Assignment = require('./models/assignment');
+const {upload_assign} = require('./middleware/multer');
 
 
 // connection
@@ -304,6 +306,8 @@ app.post('/api/courses', async (req, res) => {
         res.status(500).json({ message: 'Failed to create course.' });
     }
 });
+
+
 app.get('/api/courses', async (req, res) => {
     const { name } = req.query; // Get the course name from the query parameter
     try {
@@ -321,6 +325,7 @@ app.get('/api/courses', async (req, res) => {
 
 app.post('/add-student', async (req, res) => {
     const { email, courseName } = req.body;
+    console.log(email)
     try {
         // Check if the student exists in the database
         const student = await Student.findOne({ email });
@@ -372,19 +377,37 @@ app.get('/api/students', async (req, res) => {
 
 app.post('/remove-student', async (req, res) => {
     const { id } = req.body; // Student's ObjectId
+    console.log(id);
 
     try {
+        // Find the course that has the student
+        const course = await Course.findOne({ students: id });
+
+        if (!course) {
+            return res.status(404).json({ message: 'Student not found in any course.' });
+        }
+
         // Update the course to remove the studentId
         await Course.updateOne(
-            { 'students': id }, // Find course with this studentId
-            { $pull: { 'students': id } } // Remove studentId from the course
+            { _id: course._id }, // Find the course by its id
+            { $pull: { students: id } } // Remove studentId from the students array
         );
+
+        // Confirm if the student was removed successfully
+        const updatedCourse = await Course.findById(course._id);
+        const studentExists = updatedCourse.students.includes(id);
+
+        if (studentExists) {
+            return res.status(500).json({ message: 'Failed to remove student from the course.' });
+        }
+
         res.status(200).json({ message: 'Student removed from the course.' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Failed to remove student from the course.' });
     }
 });
+
 
 app.get('/api/search/teachers', async (req, res) => {
     const query = req.query.q;
@@ -396,6 +419,10 @@ app.get('/api/search/teachers', async (req, res) => {
     }
 });
 
+
+
+
+
 app.get('/api/search/subjects', async (req, res) => {
     const query = req.query.q;
     try {
@@ -405,9 +432,35 @@ app.get('/api/search/subjects', async (req, res) => {
         res.status(500).send('Error fetching subjects');
     }
 });
+
+app.post('/submit_assignment', upload_assign.single('assignment_file'), async (req, res) => {
+    try {
+      const { assignment_title, submission_notes } = req.body;
+      const teacherId = req.user._id; // Get the logged-in teacher's ID (assuming authentication is in place)
+  
+      // Create a new assignment
+      const newAssignment = new Assignment({
+        assignment_title,
+        assignment_file: req.file.path, // Path where the file is stored
+        submission_notes,
+        teacher: teacherId
+      });
+  
+      await newAssignment.save();
+      res.status(201).json({ message: 'Assignment uploaded successfully!' });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to upload assignment' });
+    }
+  });
+  
+  
+
+
+
 app.get('/students', async (req, res) => {
     try {
         const courses = await Course.find().populate('studentId');
+        console.log(courses)
         res.status(200).json(courses);
     } catch (err) {
         console.error(err);

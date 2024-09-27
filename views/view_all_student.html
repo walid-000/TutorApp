@@ -27,6 +27,7 @@
             try {
                 const response = await fetch('/students');
                 const students = await response.json();
+                console.log("students " ,students)
                 const studentList = document.getElementById('student-list');
                 
                 // Clear existing list before adding dynamically fetched data
@@ -40,7 +41,7 @@
                 } else {
                     students.forEach(course => {
                         const li = document.createElement('li');
-                        li.textContent = `${course.studentId.name} - ${course.courseName}`;
+                        li.textContent = `${course.student} - ${course.courseName}`;
                         studentList.appendChild(li);
                     });
                 }
