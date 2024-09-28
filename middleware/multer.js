@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   }
 });
 
-// Filter to only accept certain file types (e.g., PDFs, docs, etc.)
+// Filter to accept specific file types (e.g., PDF, DOC, DOCX)
 const fileFilter = (req, file, cb) => {
   const allowedFileTypes = /pdf|doc|docx/;
   const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
@@ -26,9 +26,9 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Initialize multer with the defined storage and file filter
-const upload_assign = multer({
+const upload = multer({
   storage: storage,
   fileFilter: fileFilter
 });
 
-module.exports ={upload_assign}
+module.exports = upload;

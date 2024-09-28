@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign New Task - Tutor App</title>
+    <link rel="stylesheet" href="task.css">
+</head>
+<body>
+    <header>
+        <h2>Assign New Task</h2>
+    </header>
+    <main>
+        <form id="assign-task-form">
+            <label for="taskTitle">Task Title:</label>
+            <input type="text" id="taskTitle" required>
+
+            <label for="taskDescription">Task Description:</label>
+            <textarea id="taskDescription" required></textarea>
+
+            <label for="dueDate">Due Date:</label>
+            <input type="date" id="dueDate" required>
+
+
+            <button type="submit">Assign Task</button>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('assign-task-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const task = {
+                taskTitle: document.getElementById('taskTitle').value,
+                taskDescription: document.getElementById('taskDescription').value,
+                dueDate: document.getElementById('dueDate').value,
+               
+            };
+            try {
+                const response = await fetch('/assign-task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(task)
+                });
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                console.error("Error is ", error);
+                alert('Error assigning ta.');
+            }
+        });
+    </script>
+</body>
+</html>

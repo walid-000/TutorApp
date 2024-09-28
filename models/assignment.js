@@ -6,7 +6,7 @@ const assignmentSchema = new mongoose.Schema({
     required: true
   },
   assignment_file: {
-    type: String, // Store the file path or URL to the file
+    type: Object, 
     required: true
   },
   submission_notes: {
@@ -14,9 +14,10 @@ const assignmentSchema = new mongoose.Schema({
     default: ''
   },
   teacher: {
-    type: mongoose.Schema.Types.ObjectId, // Reference to the teacher who uploaded the assignment
+    type: mongoose.Schema.Types.ObjectId, 
     ref: 'Teacher',
-      },
+    required: true
+  },
   created_at: {
     type: Date,
     default: Date.now

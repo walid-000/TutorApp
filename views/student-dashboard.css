@@ -1,6 +1,6 @@
 /* Styling for the student dashboard */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     background-color: #f5f7fa;
     color: #333;
     margin: 0;
@@ -14,21 +14,24 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
+    align-items: center;
+    flex-grow: 4; /* Allow this section to grow */
 }
 
 h2 {
     margin: 0;
+    font-size: 1.5rem;
 }
 
 .profile-menu {
     display: flex;
     align-items: center;
+    margin-left: auto; /* Push profile menu to the right */
 }
 
 .profile-menu img {
@@ -36,6 +39,7 @@ h2 {
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+    border: 2px solid white; /* Add a border to the profile photo */
 }
 
 .dropdown {
@@ -50,6 +54,8 @@ h2 {
     border: none;
     cursor: pointer;
     font-size: 16px;
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition */
 }
 
 .dropdown-content {
@@ -57,8 +63,9 @@ h2 {
     position: absolute;
     background-color: #f1f1f1;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
+    border-radius: 5px; /* Rounded corners for dropdown */
 }
 
 .dropdown-content a {
@@ -66,6 +73,7 @@ h2 {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    transition: background-color 0.3s; /* Smooth transition */
 }
 
 .dropdown-content a:hover {
@@ -82,10 +90,16 @@ main {
 
 section {
     margin-bottom: 20px;
+    background: white; /* White background for sections */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow for sections */
+    padding: 15px; /* Padding inside sections */
 }
 
 h3 {
     color: #007bff;
+    margin-bottom: 10px; /* Space below section titles */
+    font-size: 1.2rem; /* Slightly larger font size */
 }
 
 form label {
@@ -98,6 +112,7 @@ form input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    width: 250px; /* Set a fixed width for input fields */
 }
 
 .btn {
@@ -108,8 +123,26 @@ form input {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    transition: background-color 0.3s; /* Smooth transition */
 }
 
 .btn:hover {
     background-color: #218838;
+}
+
+/* Styles for the search results */
+#search-results {
+    margin-top: 15px;
+}
+
+.card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px; /* Space between cards */
+    transition: box-shadow 0.3s; /* Smooth transition */
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow on hover */
 }

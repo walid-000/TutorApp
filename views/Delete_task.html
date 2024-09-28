@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Assigned Task</title>
+    <link rel="stylesheet" href="task.css"> 
+</head>
+<body>
+    <h1>Delete Task</h1>
+    <form id="delete-task-form">
+        <label for="task-title">Task :</label>
+        <input type="text" id="task-title" name="task-title" required><br><br>
+        <button type="submit">Delete Task</button>
+    </form>
+
+    <script>
+        document.getElementById('delete-task-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const taskTitle = document.getElementById('task-title').value;
+
+            fetch(`/delete-task`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title: taskTitle }) 
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); 
+            })
+            .catch(error => console.error('Error deleting task:', error));
+        });
+    </script>
+</body>
+</html>

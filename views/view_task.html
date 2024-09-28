@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Assigned Tasks</title>
+    <link rel="stylesheet" href="task.css"> 
+</head>
+<body>
+    <h1>Assigned Tasks</h1>
+    <ul id="task-list">
+       
+    </ul>
+    <script>
+       
+        fetch('/view-tasks')
+            .then(response => response.json())
+            .then(tasks => {
+                const taskList = document.getElementById('task-list');
+                tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.textContent = `${task.taskTitle}: ${task.taskDescription} (Due: ${new Date(task.dueDate).toLocaleDateString()})`;
+                    taskList.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error fetching tasks:', error));
+    </script>
+</body>
+</html>

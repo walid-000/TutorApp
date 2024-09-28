@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" content="initial-scale=1.0">
+    <title>Extend Course End Date</title>
+    <link rel="stylesheet" href="course.css">
+</head>
+<body>
+    <h2>Extend Course End Date</h2>
+    <form id="extend-course-form">
+        <label for="course-name">Course Name:</label>
+        <input type="text" id="course-name" required>
+        <label for="new-end-date">New End Date:</label>
+        <input type="date" id="new-end-date" required>
+        <button type="submit">Extend Course</button>
+    </form>
+
+    <script>
+        document.getElementById('extend-course-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const courseName = document.getElementById('course-name').value;
+            const newEndDate = document.getElementById('new-end-date').value;
+
+            try {
+                const response = await fetch(`/api/courses/extend/${courseName}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newEndDate })
+                });
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to extend course end date.');
+            }
+        });
+    </script>
+</body>
+</html>

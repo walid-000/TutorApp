@@ -5,9 +5,13 @@ const path = require('path');
 require('dotenv').config();
 const app = express();
 const port = 3000;
-const Student = require("./models/student")
+const router = express.Router();
+const Task = require('./models/Task');
+const Student = require("./models/student"); 
 const Course = require('./models/course');
 const nodemailer = require('nodemailer');
+const taskroutes = require('./models/taskroutes');
+app.use(taskroutes);
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser")
 const multer = require('multer');
@@ -16,8 +20,6 @@ const Subject = require('./models/subject');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const { checkAuth , LogRequestMiddlewarefn} = require("./middleware/global")
-const Assignment = require('./models/assignment');
-const {upload_assign} = require('./middleware/multer');
 
 
 // connection
@@ -41,9 +43,13 @@ app.use(LogRequestMiddlewarefn("log.txt"))
 
 
 
-// Serve static files from the 'views' directory
+
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+    res.send('Server is up and running!');
+});
 
 
 const fileFilter = (req, file, cb) => {
@@ -55,13 +61,13 @@ const fileFilter = (req, file, cb) => {
 };
 
 
-// Storage configuration for multer to handle file uploads
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Path where files will be stored
+        cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname); // Unique filename
+        cb(null, Date.now() + '-' + file.originalname); 
     }
 });
 const upload = multer({ 
@@ -102,14 +108,13 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('A user connected');
 
-    // Handle messages from students
     socket.on('studentMessage', (data) => {
-        io.emit('teacherReceiveMessage', data); // Send message to the teacher
+        io.emit('teacherReceiveMessage', data);
     });
 
-    // Handle messages from teachers
+   
     socket.on('teacherMessage', (data) => {
-        io.emit('studentReceiveMessage', data); // Send message to the students
+        io.emit('studentReceiveMessage', data); 
     });
 
     socket.on('disconnect', () => {
@@ -136,7 +141,7 @@ app.post('/api/students', async (req, res) => {
         res.status(400).send(error);
     }
 });
-// File filter for certificates and photos
+
 
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -175,7 +180,7 @@ app.post("/api/login", async (req, res) => {
     }
 });
 app.post('/logout', (req, res) => {
-    res.clearCookie('authToken'); // Clear the cookie
+    res.clearCookie('authToken'); 
     res.status(200).json({ message: 'Logged out successfully' });
 });
 const bcrypt = require('bcrypt');
@@ -219,20 +224,19 @@ app.post('/register-teacher', upload.fields([{ name: 'certificates', maxCount: 1
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'An error occurred during registration.' });
-        console.error('Error:', error.stack); // This will show where the error occurred
+        console.error('Error:', error.stack); 
     }
 });
-// Inside teachers.js
+
 app.get('/api/teachers', async (req, res) => {
-    const { name } = req.query; // Get the teacher name from query parameters
+    const { name } = req.query; 
     try {
-        const query = name ? { name: { $regex: name, $options: 'i' } } : {}; // Case-insensitive search
+        const query = name ? { name: { $regex: name, $options: 'i' } } : {}; 
 
-        console.log('Searching for teachers with query:', query); // Log the query
+        console.log('Searching for teachers with query:', query); 
 
-        const teachers = await Teacher.find(query); // Fetch teachers from the database
-
-        console.log('Found teachers:', teachers); // Log the found teachers
+        const teachers = await Teacher.find(query); 
+        console.log('Found teachers:', teachers); 
 
         res.status(200).json(teachers);
     } catch (error) {
@@ -277,7 +281,7 @@ app.post('/api/courses', async (req, res) => {
     const { name, startDate, endDate } = req.body;
 
     try {
-        // Check if a course with the same name is already active
+        
         const existingCourse = await Course.findOne({
             courseName: name,
             $or: [
@@ -286,12 +290,12 @@ app.post('/api/courses', async (req, res) => {
             ]
         });
 
-        // If an active course exists, send a response
+       
         if (existingCourse) {
             return res.status(400).json({ message: 'A course with this name is already active until ' + existingCourse.endDate });
         }
 
-        // Create a new course
+       
         const newCourse = new Course({
             courseName: name,
             startDate: new Date(startDate),
@@ -309,10 +313,10 @@ app.post('/api/courses', async (req, res) => {
 
 
 app.get('/api/courses', async (req, res) => {
-    const { name } = req.query; // Get the course name from the query parameter
+    const { name } = req.query; 
     try {
         const courses = await Course.find({
-            courseName: { $regex: name, $options: 'i' } // Use correct field
+            courseName: { $regex: name, $options: 'i' } 
         });
         res.status(200).json(courses);
     } catch (error) {
@@ -327,30 +331,30 @@ app.post('/add-student', async (req, res) => {
     const { email, courseName } = req.body;
     console.log(email)
     try {
-        // Check if the student exists in the database
+        
         const student = await Student.findOne({ email });
         if (!student) {
             return res.status(400).json({ message: 'No student with this email in the database.' });
         }
 
-        // Check if the course already exists
+       
         let course = await Course.findOne({ courseName });
         if (!course) {
-            // If not, create a new course
+            
             course = new Course({
                 courseName,
-                students: [student._id], // Add the student to the course
-                startDate: new Date(), // Set your desired start date
+                students: [student._id], 
+                startDate: new Date(), 
                 endDate: new Date() // Set your desired end date
             });
             await course.save(); // Save the new course
             return res.status(200).json({ message: 'Student added to course successfully.' });
         } else {
-            // If the course already exists, check if the student is already enrolled
+            
             if (course.students.includes(student._id)) {
                 return res.status(400).json({ message: 'Student is already added to this course.' });
             } else {
-                // If not, add the student to the existing course
+                
                 course.students.push(student._id);
             }
         }
@@ -432,31 +436,6 @@ app.get('/api/search/subjects', async (req, res) => {
         res.status(500).send('Error fetching subjects');
     }
 });
-
-app.post('/submit_assignment', upload_assign.single('assignment_file'), async (req, res) => {
-    try {
-      const { assignment_title, submission_notes } = req.body;
-      const teacherId = req.user._id; // Get the logged-in teacher's ID (assuming authentication is in place)
-  
-      // Create a new assignment
-      const newAssignment = new Assignment({
-        assignment_title,
-        assignment_file: req.file.path, // Path where the file is stored
-        submission_notes,
-        teacher: teacherId
-      });
-  
-      await newAssignment.save();
-      res.status(201).json({ message: 'Assignment uploaded successfully!' });
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to upload assignment' });
-    }
-  });
-  
-  
-
-
-
 app.get('/students', async (req, res) => {
     try {
         const courses = await Course.find().populate('studentId');
@@ -467,10 +446,114 @@ app.get('/students', async (req, res) => {
         res.status(500).json({ message: 'Failed to retrieve students.' });
     }
 });
+app.post('/assign-task', async (req, res) => {
+    console.log('Received task assignment:', req.body);
+
+    const { taskTitle, taskDescription, dueDate } = req.body;
+
+    try {
+        
+        const newTask = new Task({
+            title: taskTitle,
+            description: taskDescription,
+            dueDate: dueDate,
+            
+        });
+
+       
+        await newTask.save();
+        res.json({ message: 'Task assigned successfully!' });
+    } catch (error) {
+        console.error('Error saving task:', error); 
+        console.error('Database error:', error); 
+        res.status(500).json({ error, message: 'Error assigning ' });
+    }
+});
+ //assign
+
+// View 
+router.get('/view-tasks', async (req, res) => {
+    try {
+        const tasks = await Task.find().populate('taskTitle').populate('assignedBy');
+        res.status(200).json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching tasks.' });
+    }
+});
+
+// Edit 
+router.post('/edit-task/:taskTitle', async (req, res) => {
+    try {
+        const updatedTask = await Task.findByTitleAndUpdate(req.params.taskTitle, req.body, { new: true });
+        res.status(200).json(updatedTask);
+    } catch (error) {
+        res.status(500).json({ message: 'Error editing task.' });
+    }
+});
+
+// Delete 
+app.delete('/delete-task', async (req, res) => {
+    const { title } = req.body;
+
+    if (!title) {
+        return res.status(400).json({ message: 'Task title is required.' });
+    }
+
+    try {
+        const result = await Task.deleteOne({ taskTitle: title }); // Adjust to match your schema
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'Task not found.' });
+        }
+        res.status(200).json({ message: 'Task deleted successfully.' });
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ message: 'Error deleting task.' });
+    }
+});
+// In your routes file (e.g., courseRoutes.js)
+app.delete('/api/courses/:name', async (req, res) => {
+    const { name } = req.params;
+
+    try {
+        const deletedCourse = await Course.findOneAndDelete({ courseName: name });
+
+        if (!deletedCourse) {
+            return res.status(404).json({ message: 'Course not found.' });
+        }
+
+        res.status(200).json({ message: 'Course deleted successfully!' });
+    } catch (error) {
+        console.error('Error deleting course:', error);
+        res.status(500).json({ message: 'Failed to delete course.' });
+    }
+});
+// In your routes file (e.g., courseRoutes.js)
+app.patch('/api/courses/extend/:name', async (req, res) => {
+    const { name } = req.params;
+    const { newEndDate } = req.body;
+
+    try {
+        const updatedCourse = await Course.findOneAndUpdate(
+            { courseName: name },
+            { endDate: new Date(newEndDate) },
+            { new: true }
+        );
+
+        if (!updatedCourse) {
+            return res.status(404).json({ message: 'Course not found.' });
+        }
+
+        res.status(200).json({ message: 'Course end date extended successfully!' });
+    } catch (error) {
+        console.error('Error extending course end date:', error);
+        res.status(500).json({ message: 'Failed to extend course end date.' });
+    }
+});
 
 
+module.exports = router;
 
-// Start the server
+
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
